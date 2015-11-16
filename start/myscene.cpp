@@ -9,29 +9,16 @@
 
 #include "myscene.h"
 
-MyScene::MyScene() : Scene()
-{
-	// start the timer.
-	t.start();
-
-	// create a single instance of MyEntity in the middle of the screen.
-	// the Sprite is added in Constructor of MyEntity.
-	myentity = new MyEntity();
-	myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
-
-	// create the scene 'tree'
-	// add myentity to this Scene as a child.
-	this->addChild(myentity);
-}
-
-
 MyScene::~MyScene()
 {
 	// deconstruct and delete the Tree
 	this->removeChild(myentity);
+	this->removeChild(bullet);
+
 
 	// delete myentity from the heap (there was a 'new' in the constructor)
 	delete myentity;
+	delete bullet;
 }
 
 void MyScene::update(float deltaTime)
@@ -47,18 +34,48 @@ void MyScene::update(float deltaTime)
 	// Spacebar scales myentity
 	// ###############################################################
 	if (input()->getKeyDown( GLFW_KEY_SPACE )) {
-		myentity->scale = Point(0.5f, 0.5f);
+		myentity->scale = Point(1.5f, 1.5f);
 	}
 	if (input()->getKeyUp( GLFW_KEY_SPACE )) {
 		myentity->scale = Point(1.0f, 1.0f);
 	}
 
 	// ###############################################################
-	// Rotate color
+	// Move myentity
 	// ###############################################################
-	if (t.seconds() > 0.0333f) {
-		RGBAColor color = myentity->sprite()->color;
-		myentity->sprite()->color = Color::rotate(color, 0.01f);
-		t.start();
+	myentity->position += velocity;
+	myentity->rotation = velocity.getAngle();
+
+	if (input()->getKey(GLFW_KEY_W)) {
+		velocity.y -= 0.01;
+	}
+	if (input()->getKey(GLFW_KEY_S)) {
+		velocity.y += 0.01;
+	}
+	if (input()->getKey(GLFW_KEY_A)) {
+		velocity.x -= 0.01;
+	}
+	if (input()->getKey(GLFW_KEY_D)) {
+		velocity.x += 0.01;
+	}
+	// ###############################################################
+	// myentity's max and min velocity
+	// ###############################################################
+	if (velocity.x >= maxvelocity)
+	{
+		velocity.x = 2;
+	}
+	if (velocity.x <= minvelocity)
+	{
+		velocity.x = -2;
+	}
+	if (velocity.y >= maxvelocity)
+	{
+		velocity.y = 2;
+	}
+	if (velocity.y <= minvelocity)
+	{
+		velocity.y = -2;
 	}
 }
+

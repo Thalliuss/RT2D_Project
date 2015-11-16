@@ -46,8 +46,11 @@ public:
 
 	// transform
 	Vector2 position; /**< @brief The position of the Entity */
+	Vector2 velocity; /**< @brief The velocity of the Entity */
 	float rotation; /**< @brief The rotation of the Entity */
 	Vector2 scale; /**< @brief The scale of the Entity */
+	float maxvelocity = 2; /**< @brief The maximum amount of velocity a boid can have */
+	float minvelocity = -2; /**< @brief The minimum amount of velocity a boid can have */
 
 	// data structure
 	/// @brief add an Entity as a child of this Entity.
