@@ -13,12 +13,10 @@ MyScene::~MyScene()
 {
 	// deconstruct and delete the Tree
 	this->removeChild(myentity);
-	this->removeChild(bullet);
 
 
 	// delete myentity from the heap (there was a 'new' in the constructor)
 	delete myentity;
-	delete bullet;
 }
 
 void MyScene::update(float deltaTime)

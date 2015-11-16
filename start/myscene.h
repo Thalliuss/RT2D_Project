@@ -11,7 +11,6 @@
 
 #include <rt2d/scene.h>
 
-#include "bullet.h"
 #include "myentity.h"
 
 /// @brief The MyScene class is the Scene implementation.
@@ -29,13 +28,9 @@ public:
 		myentity = new MyEntity();
 		myentity->position = Point2(SWIDTH / 2, SHEIGHT / 2);
 
-		bullet = new MyBullet();
-		bullet->position = Point2(SWIDTH / 2, SHEIGHT / 2);
-
 		// create the scene 'tree'
 		// add myentity to this Scene as a child.
 		this->addChild(myentity);
-		this->addChild(bullet);
 	}
 	/// @brief Destructor
 	virtual ~MyScene();
@@ -48,7 +43,6 @@ public:
 private:
 	/// @brief the rotating square in the middle of the screen
 	MyEntity* myentity;
-	MyEntity* bullet;
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 };
