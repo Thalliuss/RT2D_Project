@@ -10,7 +10,6 @@
 MyEntity::MyEntity() : Entity()
 {
 	this->addSprite("assets/car.tga");
-	this->addChild
 }
 
 MyEntity::~MyEntity()

@@ -10,6 +10,7 @@
 #define MYENTITY_H
 
 #include <rt2d/entity.h>
+
 #include "bullet.h"
 
 /// @brief The MyEntity class is the Entity implementation.
