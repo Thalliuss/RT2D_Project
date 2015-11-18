@@ -10,6 +10,7 @@
 #define MYENTITY_H
 
 #include <rt2d/entity.h>
+#include "bullet.h"
 
 /// @brief The MyEntity class is the Entity implementation.
 class MyEntity : public Entity
@@ -24,6 +25,9 @@ public:
 	/// @param deltaTime the elapsed time in seconds
 	/// @return void
 	virtual void update(float deltaTime);
+
+	//
+	bullet = new Bullet();
 
 private:
 	/* add your private declarations */

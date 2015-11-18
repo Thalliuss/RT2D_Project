@@ -32,7 +32,7 @@ void MyScene::update(float deltaTime)
 	// Spacebar scales myentity
 	// ###############################################################
 	if (input()->getKeyDown( GLFW_KEY_SPACE )) {
-		myentity->scale = Point(1.5f, 1.5f);
+		myentity->scale = Point(1.1f, 1.1f);
 	}
 	if (input()->getKeyUp( GLFW_KEY_SPACE )) {
 		myentity->scale = Point(1.0f, 1.0f);
