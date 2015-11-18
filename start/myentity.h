@@ -18,7 +18,10 @@ class MyEntity : public Entity
 {
 public:
 	/// @brief Constructor
-	MyEntity();
+	MyEntity() : Entity() {
+		bullet = new Bullet();
+	}
+	
 	/// @brief Destructor
 	virtual ~MyEntity();
 
@@ -26,9 +29,6 @@ public:
 	/// @param deltaTime the elapsed time in seconds
 	/// @return void
 	virtual void update(float deltaTime);
-
-	//
-	bullet = new Bullet();
 
 private:
 	/* add your private declarations */
