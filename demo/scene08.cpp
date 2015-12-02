@@ -64,14 +64,19 @@ Scene08::~Scene08()
 		cells[i] = NULL;
 	}
 	cells.clear();
+
+	delete grid;
 }
 
 void Scene08::update(float deltaTime)
 {
 	// ###############################################################
-	// Make SuperScene do what it needs to do (Escape key stops Scene)
+	// Make SuperScene do what it needs to do
+	// - Escape key stops Scene
+	// - Move Camera
 	// ###############################################################
 	SuperScene::update(deltaTime);
+	SuperScene::moveCamera(deltaTime);
 
 	// ###############################################################
 	// - link mouse to camera
@@ -116,32 +121,6 @@ void Scene08::update(float deltaTime)
 		} else {
 			c->entity->sprite()->color.a = 255;
 		}
-	}
-
-	// ###############################################################
-	// Move Camera (Arrow up, down, left, right)
-	// ###############################################################
-	float speed = 300.0f; // 300 units / second
-
-	// Right and Down vector
-	glm::vec3 right = glm::vec3(1, 0, 0);
-	glm::vec3 up = glm::vec3(0, 1, 0);
-
-	// Move up
-	if (input()->getKey( GLFW_KEY_UP )) {
-		camera()->position -= up * deltaTime * speed;
-	}
-	// Move down
-	if (input()->getKey( GLFW_KEY_DOWN )) {
-		camera()->position += up * deltaTime * speed;
-	}
-	// Strafe right
-	if (input()->getKey( GLFW_KEY_RIGHT )) {
-		camera()->position += right * deltaTime * speed;
-	}
-	// Strafe left
-	if (input()->getKey( GLFW_KEY_LEFT )) {
-		camera()->position -= right * deltaTime * speed;
 	}
 /*
 	// ###############################################################

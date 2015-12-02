@@ -27,7 +27,6 @@ Entity::Entity()
 	scale = Vector2(1.0f, 1.0f);
 
 	_worldpos = Vector2(0.0f, 0.0f);
-	_culled = false;
 
 	_sprite = NULL;
 	_line = NULL;
@@ -38,6 +37,36 @@ Entity::~Entity()
 	//printf("Entity dtor %d\n", _guid);
 	deleteSprite();
 	deleteLine();
+	deleteSpritebatch();
+}
+
+void Entity::addChild(Entity* child)
+{
+	if(child->_parent != NULL) {
+		child->_parent->removeChild(child);
+	}
+	child->_parent = this;
+	this->_children.push_back(child);
+}
+
+void Entity::removeChild(Entity* child)
+{
+	std::vector< Entity* >::iterator it = _children.begin();
+	while (it != _children.end()) {
+		if ((*it)->_guid == child->_guid) {
+			it = _children.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
+Entity* Entity::getChild(unsigned int i)
+{
+	if (i < _children.size()) {
+		return _children[i];
+	}
+	return NULL;
 }
 
 void Entity::addLine(const std::string& filename)
@@ -109,31 +138,21 @@ void Entity::addSpriteSheet(const std::string& filename, int u, int v)
 	_sprite->setupSprite(filename, 0.5f, 0.5f, uvwidth, uvheight, DEFAULTFILTER, DEFAULTWRAP); // trilinear filter, mirror repeat
 }
 
-void Entity::addChild(Entity* child)
+void Entity::addGrid(const std::string& filename, int u, int v, int cols, int rows, int sizex, int sizey)
 {
-	if(child->_parent != NULL) {
-		child->_parent->removeChild(child);
-	}
-	child->_parent = this;
-	this->_children.push_back(child);
-}
-
-void Entity::removeChild(Entity* child)
-{
-	std::vector< Entity* >::iterator it = _children.begin();
-	while (it != _children.end()) {
-		if ((*it)->_guid == child->_guid) {
-			it = _children.erase(it);
-		} else {
-			++it;
+	deleteSpritebatch();
+	for (int x = 0; x < cols; x++) {
+		for (int y = 0; y < rows; y++) {
+			Sprite* s = new Sprite();
+			s->useCulling(1);
+			s->spriteposition.x = x * sizex;
+			s->spriteposition.y = y * sizey;
+			float uvwidth = 1.0f / u;
+			float uvheight = 1.0f / v;
+			s->setupSprite(filename, 0.5f, 0.5f, uvwidth, uvheight, DEFAULTFILTER, DEFAULTWRAP); // trilinear filter, mirror repeat
+			_spritebatch.push_back(s);
 		}
 	}
-}
 
-Entity* Entity::getChild(unsigned int i)
-{
-	if (i < _children.size()) {
-		return _children[i];
-	}
-	return NULL;
+	std::cout << "grid added: " << _spritebatch.size() << " sprites." << std::endl;
 }

@@ -26,7 +26,6 @@ using namespace std;
 Shader::Shader()
 {
 	_programID =     -1;
-
 	_matrixID =      -1;
 	_textureID  =    -1;
 	_blendColorID =  -1;
@@ -42,7 +41,8 @@ Shader::~Shader()
 void Shader::_attachID()
 {
 	// Get handles for our uniforms and buffers and send them to the shader
-	_matrixID =      glGetUniformLocation(_programID, "MVP"); // MVP uniform in vertex shader
+	_matrixID = glGetUniformLocation(_programID, "MVP"); // MVP uniform in vertex shader
+
 	_textureID  =    glGetUniformLocation(_programID, "textureSampler"); // textureSampler uniform in fragment shader
 	_blendColorID =  glGetUniformLocation(_programID, "blendColor"); // blendColor uniform in fragment shader
 	_uvOffsetID = 	 glGetUniformLocation(_programID, "UVoffset"); // UVoffset uniform in fragment shader

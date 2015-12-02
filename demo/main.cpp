@@ -12,12 +12,16 @@
 #include "scene00.h"
 #include "scene01.h"
 #include "scene02.h"
+#include "scene02a.h"
 #include "scene03.h"
+#include "scene03a.h"
 #include "scene04.h"
 #include "scene05.h"
 #include "scene06.h"
 #include "scene07.h"
 #include "scene08.h"
+#include "scene09.h"
+#include "scene10.h"
 
 int main( void )
 {
@@ -28,13 +32,17 @@ int main( void )
 	std::vector<SuperScene*> scenes;
 	scenes.push_back(new Scene00());
 	scenes.push_back(new Scene01());
-	scenes.push_back(new Scene02());
+	//scenes.push_back(new Scene02());
+	scenes.push_back(new Scene02a());
 	scenes.push_back(new Scene03());
+	scenes.push_back(new Scene03a());
 	scenes.push_back(new Scene04());
 	scenes.push_back(new Scene05());
 	scenes.push_back(new Scene06());
 	scenes.push_back(new Scene07());
 	scenes.push_back(new Scene08());
+	scenes.push_back(new Scene09());
+	scenes.push_back(new Scene10());
 	int s = scenes.size();
 
 	// SuperScene::Player in superscene.h

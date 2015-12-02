@@ -14,10 +14,10 @@ Scene02::Scene02() : SuperScene()
 {
 	srand((unsigned)time(NULL));
 
-	text[0]->message("Scene02: Lists of n Things");
+	text[0]->message("Scene02: Lists of n Things (Entities)");
 
 	// create Boids
-	int amount = 64;
+	int amount = 2500;
 	for (int i=0; i<amount; i++) {
 		BoidEntity* b = new BoidEntity();
 		b->addSprite("assets/boid.tga");
@@ -30,7 +30,8 @@ Scene02::Scene02() : SuperScene()
 		*/
 		static RGBAColor rgb = RED;
 		b->sprite()->color = rgb;
-		rgb = Color::rotate(rgb, 1.0f/amount);
+		//rgb = Color::rotate(rgb, 1.0f/amount);
+		rgb = Color::rotate(rgb, 0.004f);
 
 		boids.push_back(b);
 		layers[0]->addChild(b);

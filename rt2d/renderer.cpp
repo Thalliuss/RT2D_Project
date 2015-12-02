@@ -118,19 +118,14 @@ void Renderer::renderScene(Scene* scene)
 	// 'root' scene node has identity Matrix
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-	// check for entitities being out of frame and cull them
-	if (CULLSCENE) {
-		_cullScene(scene);
-	}
-
 	// start rendering everything, starting from the scene 'rootnode'
-	this->_renderEntity(modelMatrix, scene);
+	this->_renderEntity(modelMatrix, scene, scene->camera());
 
 	// Swap buffers
 	glfwSwapBuffers(_window);
 }
 
-void Renderer::_renderEntity(glm::mat4& modelMatrix, Entity* entity)
+void Renderer::_renderEntity(glm::mat4& modelMatrix, Entity* entity, Camera* camera)
 {
 	// multiply ModelMatrix for this child with the ModelMatrix of the parent (the caller of this method)
 	// the first time we do this (for the root-parent), modelMatrix is identity.
@@ -146,25 +141,25 @@ void Renderer::_renderEntity(glm::mat4& modelMatrix, Entity* entity)
 	// Check for Sprites to see if we need to render anything
 	Sprite* sprite = entity->sprite();
 	if (sprite != NULL) {
-		if (!entity->_culled) {
-			// Finally, generate our MVP...
-			glm::mat4 MVP = _projectionMatrix * _viewMatrix * modelMatrix;
-			// ... and render the Sprite.
-			if (sprite->dynamic()) {
-				this->_renderSprite(MVP, sprite, true); // dynamic Sprite from PixelBuffer
-			} else {
-				this->_renderSprite(MVP, sprite, false); // static Sprite from ResourceManager
-			}
+		// render the Sprite
+		if (sprite->dynamic()) {
+			this->_renderSprite(modelMatrix, sprite, true); // dynamic Sprite from PixelBuffer
+		} else {
+			this->_renderSprite(modelMatrix, sprite, false); // static Sprite from ResourceManager
 		}
 	}
 
 	// Check for Lines to see if we need to render anything
 	Line* line = entity->line();
 	if (line != NULL) {
-		// Finally, generate our MVP...
-		glm::mat4 MVP = _projectionMatrix * _viewMatrix * modelMatrix;
-		// ... and render the Line.
-		this->_renderLine(MVP, line);
+		// render the Line.
+		this->_renderLine(modelMatrix, line);
+	}
+
+	// Check for Spritebatch to see if we need to render anything
+	if (entity->_spritebatch.size() > 0) {
+		// render the Spritebatch
+		this->_renderSpriteBatch(modelMatrix, entity->_spritebatch, camera);
 	}
 
 	// Render all Children (recursively)
@@ -172,7 +167,7 @@ void Renderer::_renderEntity(glm::mat4& modelMatrix, Entity* entity)
 	std::vector<Entity*>::iterator child;
 	for (child = children.begin(); child != children.end(); child++) {
 		// Transform child's children...
-		this->_renderEntity(modelMatrix, *child);
+		this->_renderEntity(modelMatrix, *child, camera);
 		// ...then reset modelMatrix for siblings to the modelMatrix of the parent.
 		modelMatrix = this->_getModelMatrix( (*child)->parent() );
 	}
@@ -195,7 +190,83 @@ glm::mat4 Renderer::_getModelMatrix(Entity* entity)
 	return mm;
 }
 
-void Renderer::_renderSprite(const glm::mat4& MVP, Sprite* sprite, bool dynamic)
+void Renderer::_renderSpriteBatch(glm::mat4& modelMatrix, std::vector<Sprite*>& spritebatch, Camera* camera)
+{
+	Sprite* spr = spritebatch[0];
+	Shader* shader = _uberShader;
+	// ask resourcemanager
+	if (shader == NULL) {
+		shader = _resman.getShader(spr->vertexshader().c_str(), spr->fragmentshader().c_str());
+	}
+	std::string texturename = spr->texturename();
+	int filter = spr->filter();
+	int wrap = spr->wrap();
+	Texture* texture = _resman.getTexture(texturename, filter, wrap);
+
+	if (spr->size.x == 0) { spr->size.x = texture->width() * spr->uvdim.x; }
+	if (spr->size.y == 0) { spr->size.y = texture->height() * spr->uvdim.y; }
+
+	Mesh* mesh = _resman.getSpriteMesh(spr->size.x, spr->size.y, spr->pivot.x, spr->pivot.y, spr->uvdim.x, spr->uvdim.y, spr->circlemesh(), spr->which());
+
+	if (texture != NULL) {
+		// Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture->getGLTexture());
+
+		// for every Sprite in the batch...
+		int s = spritebatch.size();
+		for (int i = 0; i < s; i++) {
+			Sprite* sprite = spritebatch[i]; // a Sprite handle
+			int culled = 0; // state that we need to draw it
+			if (sprite->useCulling()) { // but maybe we don't
+				int half_width = SWIDTH/2;
+				int half_height = SHEIGHT/2;
+
+				int left_edge = camera->position.x - half_width;
+				int right_edge = camera->position.x + half_width;
+				int top_edge = camera->position.y - half_height;
+				int bottom_edge = camera->position.y + half_height;
+				float posx = sprite->spriteposition.x;
+				float posy = sprite->spriteposition.y;
+
+				int debug = 0;
+				if (debug) { // cull visibly within the frame
+					if (posx - spr->size.x < left_edge) { culled = 1; }
+					if (posx + spr->size.x > right_edge) { culled = 1; }
+					if (posy + spr->size.y > bottom_edge) { culled = 1; }
+					if (posy - spr->size.y < top_edge) { culled = 1; }
+				} else {
+					if (posx + spr->size.x < left_edge) { culled = 1; }
+					if (posx - spr->size.x > right_edge) { culled = 1; }
+					if (posy - spr->size.y > bottom_edge) { culled = 1; }
+					if (posy + spr->size.y < top_edge) { culled = 1; }
+				}
+			}
+			// this Sprite isn't culled and needs to be drawn
+			if (!culled) {
+				RGBAColor blendcolor = sprite->color;
+				// _uvOffsetID
+				glUniform2f(shader->uvOffsetID(), sprite->uvoffset.x, sprite->uvoffset.y);
+
+				// use spritepos for position
+				glm::vec3 position = glm::vec3(sprite->spriteposition.x, sprite->spriteposition.y, 0.0f);
+				glm::vec3 rotation = glm::vec3(0.0f, 0.0f, sprite->spriterotation);
+				glm::vec3 scale = glm::vec3(sprite->spritescale.x, sprite->spritescale.y, 0.0f);
+
+				// Build the Model matrix
+				glm::mat4 translationMatrix	= glm::translate(modelMatrix, position);
+				glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(0.0f, 0.0f, rotation.z);
+				glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), scale);
+				glm::mat4 mm = translationMatrix * rotationMatrix * scalingMatrix;
+
+				this->_renderMesh(mm, shader, texture, mesh, mesh->numverts(), GL_TRIANGLES, blendcolor);
+			}
+		}
+	}
+
+}
+
+void Renderer::_renderSprite(const glm::mat4& modelMatrix, Sprite* sprite, bool dynamic)
 {
 	Shader* shader = _uberShader;
 	// ask resourcemanager
@@ -223,7 +294,11 @@ void Renderer::_renderSprite(const glm::mat4& MVP, Sprite* sprite, bool dynamic)
 	glUniform2f(shader->uvOffsetID(), sprite->uvoffset.x, sprite->uvoffset.y);
 
 	if (texture != NULL) {
-		this->_renderMesh(MVP, shader, texture, mesh, mesh->numverts(), GL_TRIANGLES, blendcolor);
+		// Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture->getGLTexture());
+
+		this->_renderMesh(modelMatrix, shader, texture, mesh, mesh->numverts(), GL_TRIANGLES, blendcolor);
 	}
 
 	if (dynamic && texture != NULL) {
@@ -231,7 +306,7 @@ void Renderer::_renderSprite(const glm::mat4& MVP, Sprite* sprite, bool dynamic)
 	}
 }
 
-void Renderer::_renderLine(const glm::mat4& MVP, Line* line)
+void Renderer::_renderLine(const glm::mat4& modelMatrix, Line* line)
 {
 	Shader* shader = _uberShader;
 	// ask resourcemanager
@@ -255,29 +330,31 @@ void Renderer::_renderLine(const glm::mat4& MVP, Line* line)
 		mesh = _resman.getLineMesh(line);
 	}
 
-	this->_renderMesh(MVP, shader, texture, mesh, numpoints, GL_LINES, blendcolor);
+	// Bind our texture in Texture Unit 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture->getGLTexture());
+
+	this->_renderMesh(modelMatrix, shader, texture, mesh, numpoints, GL_LINES, blendcolor);
 
 	if (line->dynamic()) {
 		delete mesh;
 	}
 }
 
-void Renderer::_renderMesh(const glm::mat4& MVP, Shader* shader,
+void Renderer::_renderMesh(const glm::mat4& modelMatrix, Shader* shader,
 	Texture* texture, Mesh* mesh, int numverts,
 	GLuint mode, RGBAColor blendcolor)
 {
 	// use our shader program
 	glUseProgram(shader->programID());
 
-	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture->getGLTexture());
+	// generate the ModelMatrix
+	glm::mat4 MVP = _projectionMatrix * _viewMatrix * modelMatrix;
 
 	// ... and send our transformation to the currently bound shader, in the "MVP" uniform
 	glUniformMatrix4fv(shader->matrixID(), 1, GL_FALSE, &MVP[0][0]);
 
 	// _blendColorID
-	//glUniform4f(shader->blendColorID(), blendcolor.r, blendcolor.g, blendcolor.b, blendcolor.a);
 	glUniform4f(shader->blendColorID(), (float) blendcolor.r/255.0f, (float) blendcolor.g/255.0f, (float) blendcolor.b/255.0f, (float) blendcolor.a/255.0f);
 
 	// Set our "textureSampler" sampler to user Texture Unit 0
@@ -324,52 +401,4 @@ void Renderer::_renderMesh(const glm::mat4& MVP, Shader* shader,
 void Renderer::cleanup()
 {
 	_resman.cleanup();
-}
-
-void Renderer::_cullScene(Scene* scene)
-{
-	Vector2 cp = Vector2(scene->camera()->position.x, scene->camera()->position.y);
-	this->_cullEntity(cp, scene);
-}
-
-void Renderer::_cullEntity(Vector2 campos, Entity* entity)
-{
-	// Cull all Children (recursively)
-	std::vector<Entity*> children = entity->children();
-
-	int half_width = SWIDTH/2;
-	int half_height = SHEIGHT/2;
-
-	int left_edge = campos.x - half_width;
-	int right_edge = campos.x + half_width;
-	int top_edge = campos.y - half_height;
-	int bottom_edge = campos.y + half_height;
-
-	int s = children.size();
-	for (int i = 0; i < s; i++) {
-		// check for being out of frame
-		bool c = false;
-		if (entity->guid() != 0) {
-			if (entity->_worldpos.x < left_edge) {
-				//std::cout << "left_edge: " << left_edge << " -> " << entity->_worldpos.x << ", " << entity->_worldpos.y << " guid: " << entity->guid() << std::endl;
-				c = true;
-			}
-			if (entity->_worldpos.x > right_edge) {
-				//std::cout << "right_edge: " << right_edge << " -> " << entity->_worldpos.x << ", " << entity->_worldpos.y << " guid: " << entity->guid() << std::endl;
-				c = true;
-			}
-			if (entity->_worldpos.y > bottom_edge) {
-				//std::cout << "bottom_edge: " << bottom_edge << " -> " << entity->_worldpos.x << ", " << entity->_worldpos.y << " guid: " << entity->guid() << std::endl;
-				c = true;
-			}
-			if (entity->_worldpos.y < top_edge) {
-				//std::cout << "top_edge: " << top_edge << " -> " << entity->_worldpos.x << ", " << entity->_worldpos.y << " guid: " << entity->guid() << std::endl;
-				c = true;
-			}
-		}
-
-		children[i]->_culled = c;
-
-		this->_cullEntity(campos, children[i]);
-	}
 }

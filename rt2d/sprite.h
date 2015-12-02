@@ -57,6 +57,10 @@ public:
 	/// @return int _frame
 	int frame() { return _frame; };
 
+	Point2 spriteposition; ///< @brief Sprite position Point_t of the Sprite (only for Spritebatches)
+	float spriterotation; ///< @brief Sprite rotation of the Sprite (only for Spritebatches)
+	Point2 spritescale; ///< @brief Sprite scale Point_t of the Sprite (only for Spritebatches)
+
 	Point2 pivot; ///< @brief Pivot Point_t of the Sprite
 	Point2 uvdim; ///< @brief UVdim Point_t of the Sprite (uvwidth, uvheight. The size of the part we need to render)
 	Point2 uvoffset; ///< @brief UVoffset Point_t of the Sprite (which part do we need to render)
@@ -138,6 +142,13 @@ public:
 	/// @return int _circlemesh
 	int circlemesh() { return _circlemesh; };
 
+	/// @brief check if this Sprite uses culling
+	/// @return int _useculling
+	int useCulling() { return _useculling; };
+	/// @brief use culling on this Sprite or not
+	/// @return void
+	void useCulling(int c) { _useculling = c; };
+
 protected:
 
 private:
@@ -156,6 +167,8 @@ private:
 
 	int _circlemesh; ///< @brief are we a square Sprite (0), or a custom one (not 0)
 	int _which; ///< @brief which segment
+
+	int _useculling; ///< @brief use culling or not
 };
 
 #endif /* SPRITE_H */

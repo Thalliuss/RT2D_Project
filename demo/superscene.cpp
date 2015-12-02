@@ -13,6 +13,8 @@ int SuperScene::activescene = 0;
 
 SuperScene::SuperScene() : Scene()
 {
+	fpstimer.start();
+
 	player = NULL;
 	top_layer = 7; // 8 layers (0-7)
 
@@ -113,4 +115,47 @@ void SuperScene::update(float deltaTime)
 	for (unsigned int i = 0; i < s; i++) {
 		text[i]->position = Point2(cam_pos.x + 50 - SWIDTH/2, cam_pos.y + 50 + (30*i) - SHEIGHT/2);
 	}
+
+	// ###############################################################
+	// show FPS
+	// ###############################################################
+	static int framecounter = 0;
+	if (fpstimer.seconds() > 1.0f) {
+		std::string fpstxt = "FPS: ";
+		fpstxt.append(std::to_string(framecounter));
+		text[1]->message(fpstxt);
+		framecounter = 0;
+		fpstimer.start();
+	}
+	framecounter++;
+}
+
+void SuperScene::moveCamera(float deltaTime)
+{
+	// ###############################################################
+	// Move Camera (Arrow up, down, left, right)
+	// ###############################################################
+	float speed = 600.0f; // 600 units / second
+
+	// Right and Down vector
+	Point2 right = Point2(1, 0);
+	Point2 up = Point2(0, 1);
+	// Direction
+	Vector2 direction = Vector2(0,0);
+
+	if (input()->getKey( GLFW_KEY_UP )) {
+		direction -= up;
+	}
+	if (input()->getKey( GLFW_KEY_DOWN )) {
+		direction += up;
+	}
+	if (input()->getKey( GLFW_KEY_RIGHT )) {
+		direction += right;
+	}
+	if (input()->getKey( GLFW_KEY_LEFT )) {
+		direction -= right;
+	}
+	direction.normalize();
+	direction *= deltaTime * speed;
+	camera()->position += direction;
 }

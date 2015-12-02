@@ -140,8 +140,12 @@ add_executable(demo
 	demo/scene01.h
 	demo/scene02.cpp
 	demo/scene02.h
+	demo/scene02a.cpp
+	demo/scene02a.h
 	demo/scene03.cpp
 	demo/scene03.h
+	demo/scene03a.cpp
+	demo/scene03a.h
 	demo/scene04.cpp
 	demo/scene04.h
 	demo/scene05.cpp
@@ -152,6 +156,10 @@ add_executable(demo
 	demo/scene07.h
 	demo/scene08.cpp
 	demo/scene08.h
+	demo/scene09.cpp
+	demo/scene09.h
+	demo/scene10.cpp
+	demo/scene10.h
 	demo/superscene.cpp
 	demo/superscene.h
 )
@@ -187,17 +195,18 @@ file(
 
 if(WIN32)
 	# Xcode and Visual working directories for demo
-	set_target_properties(demo PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/demo/")
-	create_target_launcher(demo WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/demo/")
+	#set_target_properties(demo PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/demo/")
+	#create_target_launcher(demo WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/demo/")
+
 	# Xcode and Visual working directories for start
-	set_target_properties(start PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/start/")
-	create_target_launcher(start WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/start/")
+	#set_target_properties(start PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/start/")
+	#create_target_launcher(start WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/start/")
 
 	# create file tabs in visual studio
-	SOURCE_GROUP(rt2d REGULAR_EXPRESSION ".*/rt2d/.*" )
-	SOURCE_GROUP(demo REGULAR_EXPRESSION ".*/demo/.*" )
-	SOURCE_GROUP(demo REGULAR_EXPRESSION ".*/start/.*" )
-	SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*/.*shaders$" )
+	#SOURCE_GROUP(rt2d REGULAR_EXPRESSION ".*/rt2d/.*" )
+	#SOURCE_GROUP(demo REGULAR_EXPRESSION ".*/demo/.*" )
+	#SOURCE_GROUP(start REGULAR_EXPRESSION ".*/start/.*" )
+	#SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*/.*shaders$" )
 endif(WIN32)
 
 

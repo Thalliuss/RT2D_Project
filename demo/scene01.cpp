@@ -56,7 +56,7 @@ Scene01::Scene01() : SuperScene()
 	ui_element->addSprite("assets/default.tga", 0.5f, 0.0f); // Default texture. Pivot point top middle. Pivot(0,0) is top left.
 	ui_element->sprite()->size = Point2(256, 64); // texture is 512x512. Make Mesh half the width, 1 row of squares (512/8).
 	ui_element->sprite()->uvdim = Point2(0.5f, 0.125f); // UV 1/8 of the height.
-	ui_element->sprite()->uvoffset = Point2(0.0f, 0.125f * 7); // Show top row. UV(0,0) is bottom left.
+	ui_element->sprite()->uvoffset = Point2(0.0f, 0.0f); // Show bottom row. UV(0,0) is bottom left.
 
 	// create a tree-structure to send to the Renderer
 	// by adding them to each other and/or the scene ('this', or one of the layers[])
@@ -87,9 +87,12 @@ Scene01::~Scene01()
 void Scene01::update(float deltaTime)
 {
 	// ###############################################################
-	// Make SuperScene do what it needs to do (Escape key stops Scene)
+	// Make SuperScene do what it needs to do
+	// - Escape key stops Scene
+	// - Move Camera
 	// ###############################################################
 	SuperScene::update(deltaTime);
+	SuperScene::moveCamera(deltaTime);
 
 	// ###############################################################
 	// Mouse cursor in screen coordinates
@@ -146,30 +149,4 @@ void Scene01::update(float deltaTime)
 	}
 	ui_element->sprite()->uvoffset.x = xoffset;
 	ui_element->position = Point2(camera()->position.x + SWIDTH/2 - 150, camera()->position.y - SHEIGHT/2 + 20);
-
-	// ###############################################################
-	// Move Camera (Arrow up, down, left, right)
-	// ###############################################################
-	float speed = 300.0f; // 300 units / second
-
-	// Right and Down vector
-	glm::vec3 right = glm::vec3(1, 0, 0);
-	glm::vec3 up = glm::vec3(0, 1, 0);
-
-	// Move up
-	if (input()->getKey( GLFW_KEY_UP )) {
-		camera()->position -= up * deltaTime * speed;
-	}
-	// Move down
-	if (input()->getKey( GLFW_KEY_DOWN )) {
-		camera()->position += up * deltaTime * speed;
-	}
-	// Strafe right
-	if (input()->getKey( GLFW_KEY_RIGHT )) {
-		camera()->position += right * deltaTime * speed;
-	}
-	// Strafe left
-	if (input()->getKey( GLFW_KEY_LEFT )) {
-		camera()->position -= right * deltaTime * speed;
-	}
 }

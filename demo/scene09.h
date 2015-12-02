@@ -7,36 +7,30 @@
  *     - What you did
  */
 
-#ifndef SCENE03_H
-#define SCENE03_H
+#ifndef SCENE09_H
+#define SCENE09_H
 
 #include <vector>
 #include <rt2d/timer.h>
 #include "superscene.h"
-#include "boidentity.h"
 #include "basicentity.h"
 
-class Scene03: public SuperScene
+class Scene09: public SuperScene
 {
 public:
-	Scene03();
-	virtual ~Scene03();
+	Scene09();
+	virtual ~Scene09();
 
 	virtual void update(float deltaTime);
 
 private:
+	BasicEntity* grid;
 	Timer t;
 
-	BasicEntity* rt2d_line;
-	BasicEntity* default_line;
-	BasicEntity* spaceship;
-
-	BasicEntity* shape_container;
-	std::vector<BasicEntity*> shapes;
-
-	BasicEntity* dynamic_line;
-
-	void updateSpaceShip(float deltaTime);
+	int gridwidth;
+	int gridheight;
+	int cellwidth;
+	int cellheight;
 };
 
-#endif /* SCENE03_H */
+#endif /* SCENE09_H */

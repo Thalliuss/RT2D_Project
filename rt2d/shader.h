@@ -24,7 +24,7 @@ public:
 	/// @brief get the programID
 	/// @return GLuint _programID
 	GLuint programID() { return _programID; };
-	/// @brief get the matrixID
+	/// @brief get the ModelViewProjection MatrixID
 	/// @return GLuint _matrixID
 	GLuint matrixID() { return _matrixID; };
 	/// @brief get the textureID
@@ -45,7 +45,6 @@ public:
 
 private:
 	GLuint _programID; ///< @brief programID (pointer to compiled shader)
-
 	GLuint _matrixID; ///< @brief attaches to MVP uniform in shader
 	GLuint _textureID; ///< @brief attaches to textureSampler uniform in shader
 	GLuint _blendColorID; ///< @brief attaches to vertexColor uniform in shader

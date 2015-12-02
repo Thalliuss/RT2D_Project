@@ -19,6 +19,9 @@ Sprite::Sprite()
 	_fragmentshader = SPRITEFRAGMENTSHADER;
 	_vertexshader = SPRITEVERTEXSHADER;
 
+	spriteposition = Point2(0.0f, 0.0f); // spritebatch only
+	spriterotation = 0.0f; // spritebatch only
+	spritescale = Point2(1.0f, 1.0f); // spritebatch only
 	pivot = Point2(0.5f, 0.5f);
 	uvdim = Point2(1.0f, 1.0f);
 	uvoffset = Point2(0.0f, 0.0f);
@@ -34,6 +37,8 @@ Sprite::Sprite()
 
 	_circlemesh = 0; // false
 	_which = -1; // disabled
+
+	_useculling = 0;
 
 	color = RGBAColor(255, 255, 255, 255);
 }
@@ -55,15 +60,7 @@ void Sprite::setupSprite(const std::string& filename, float pivotx, float pivoty
 
 void Sprite::setupCircleSprite(const std::string& filename, int radius, int segments)
 {
-	_texturename = filename;
-	_circlemesh = segments;
-	_which = -1;
-
-	_filter = DEFAULTFILTER;
-	_wrap = DEFAULTWRAP;
-
-	size.x = radius * 2;
-	size.y = radius * 2;
+	this->setupSegmentSprite(filename, radius, segments, -1);
 }
 
 void Sprite::setupSegmentSprite(const std::string& filename, int radius, int segments, int which)
