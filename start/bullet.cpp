@@ -3,7 +3,7 @@
 
 Bullet::Bullet()
 {
-	this->addSprite("assets/boid.tga");
+	this->addSprite("assets/bullet.tga");
 }
 
 
@@ -14,6 +14,5 @@ Bullet::~Bullet()
 
 void Bullet::update(float deltaTime)
 {
-	position += velocity;
-	rotation = velocity.getAngle();
+
 }

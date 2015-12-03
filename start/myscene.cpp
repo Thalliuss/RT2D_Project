@@ -9,13 +9,22 @@
 
 #include "myscene.h"
 
-void MyScene::addEngineparts()
+void MyScene::addEngineParts()
 {
 	engineParts = new Engine();
 	this->addChild(engineParts);
 	engineParts->position = myentity->position;
 	engine.push_back(engineParts);
 }
+
+void MyScene::addBulletParts()
+{
+	bulletParts = new Bullet();
+	this->addChild(bulletParts);
+	bulletParts->position = myentity->position;
+	bullets.push_back(bulletParts);
+}
+
 
 MyScene::MyScene() : Scene()
 {
@@ -48,17 +57,22 @@ void MyScene::update(float deltaTime)
 	}
 
 	// Shoot a bullet
-	if (input()->getKeyDown(GLFW_KEY_SPACE)) {
-
+	if (canShoot == true) {
+		if (input()->getKeyDown(GLFW_KEY_SPACE)) {
+			addBulletParts();
+			bulletParts->polar.angle = myentity->rotation;
+			canShoot = false;
+		}
 	}
 
-	addEngineparts();
+	addEngineParts();
 	engineParts->polar.angle = myentity->rotation;
 
 	int s = engine.size();
 	for (int i = 0; i<s; i++) {
 		engine[i]->rotation = engineParts->polar.angle;
 		engine[i]->position += engineParts->polar.cartesian() * -0.01 * deltaTime;
+
 		if (engine[i]->position >= Point2(SWIDTH, SHEIGHT)) {
 			removeChild(engine[i]);
 		} 
@@ -67,6 +81,25 @@ void MyScene::update(float deltaTime)
 			removeChild(engine[i]);
 		}
 	}
+
+	int a = bullets.size();
+	for (int i = 0; i<a; i++) {
+		bullets[i]->rotation = bulletParts->polar.angle;
+		bullets[i]->position += bulletParts->polar.cartesian() * 4 * deltaTime;
+
+		if (bullets[i]->position >= Point2(SWIDTH, SHEIGHT)) {
+			removeChild(bullets[i]);
+			canShoot = true;
+		}else {
+			canShoot = false;
+		}
+
+		if (a >= 25) {
+			bullets.pop_back();
+			removeChild(bullets[i]);
+		}
+	}
+
 
 	// Move myentity
 	if (input()->getKey(GLFW_KEY_W)) {

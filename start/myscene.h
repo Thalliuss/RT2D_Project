@@ -11,22 +11,27 @@
 
 #include <rt2d/scene.h>
 #include <demo/superscene.h>
+#include <deque>
 
 #include "myentity.h"
 #include "engine.h"
 #include "bullet.h"
-#include "deque"
 
 /// @brief The MyScene class is the Scene implementation.
 class MyScene : public Scene
 {
 public:
+	bool canShoot = true;
+
+
 	/// @brief Constructor
 	MyScene();
 	/// @brief Destructor
 	virtual ~MyScene();
 
-	void addEngineparts();
+	void addEngineParts();
+
+	void addBulletParts();
 
 	/// @brief update is automatically called every frame
 	/// @param deltaTime the elapsed time in seconds
@@ -41,12 +46,13 @@ private:
 	/// @brief engine
 	Engine* engineParts;
 
-
 	/// @brief bullet
-	Bullet* bullet;
+	Bullet* bulletParts;
 
 	/// @brief A collection of parts
 	std::deque<Engine*> engine;
+
+	std::deque<Bullet*> bullets;
 };
 
 #endif /* SCENE00_H */
