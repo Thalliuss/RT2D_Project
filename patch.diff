@@ -1,0 +1,189 @@
+From 01b887c38b68f266b6e926efc2df0853ad833538 Mon Sep 17 00:00:00 2001
+From: rktrlng <rik.teerling@gmail.com>
+Date: Sat, 5 Dec 2015 23:33:15 +0100
+Subject: [PATCH] scene03b
+
+---
+ CMakeLists.txt    |  2 ++
+ demo/main.cpp     |  2 ++
+ demo/scene03b.cpp | 97 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ demo/scene03b.h   | 30 +++++++++++++++++
+ 4 files changed, 131 insertions(+)
+ create mode 100644 demo/scene03b.cpp
+ create mode 100644 demo/scene03b.h
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ec91af2..7cfa9f8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -146,6 +146,8 @@ add_executable(demo
+ 	demo/scene03.h
+ 	demo/scene03a.cpp
+ 	demo/scene03a.h
++	demo/scene03b.cpp
++	demo/scene03b.h
+ 	demo/scene04.cpp
+ 	demo/scene04.h
+ 	demo/scene05.cpp
+diff --git a/demo/main.cpp b/demo/main.cpp
+index 1f5c012..5c3f90f 100644
+--- a/demo/main.cpp
++++ b/demo/main.cpp
+@@ -15,6 +15,7 @@
+ #include "scene02a.h"
+ #include "scene03.h"
+ #include "scene03a.h"
++#include "scene03b.h"
+ #include "scene04.h"
+ #include "scene05.h"
+ #include "scene06.h"
+@@ -36,6 +37,7 @@ int main( void )
+ 	scenes.push_back(new Scene02a());
+ 	scenes.push_back(new Scene03());
+ 	scenes.push_back(new Scene03a());
++	scenes.push_back(new Scene03b());
+ 	scenes.push_back(new Scene04());
+ 	scenes.push_back(new Scene05());
+ 	scenes.push_back(new Scene06());
+diff --git a/demo/scene03b.cpp b/demo/scene03b.cpp
+new file mode 100644
+index 0000000..7803ee5
+--- /dev/null
++++ b/demo/scene03b.cpp
+@@ -0,0 +1,97 @@
++/**
++ * This file is part of RT2D, a 2D OpenGL framework.
++ *
++ * - Copyright 2015 Rik Teerling <rik@onandoffables.com>
++ */
++#include "scene03b.h"
++
++Scene03b::Scene03b() : SuperScene()
++{
++	t.start();
++	text[0]->message("Scene03b: Spirograph");
++
++	factor = 7;
++	radius = 225;
++	size = 1.0f;
++
++	// ###############################
++	container = new BasicEntity();
++	container->position.x = SWIDTH/2;
++	container->position.y = SHEIGHT/2;
++	container->scale.x = size;
++	container->scale.y = size;
++
++	this->makeLines();
++
++	// create a tree-structure to send to the Renderer
++	// by adding them to each other and/or the scene
++	this->addChild(container);
++}
++
++Scene03b::~Scene03b()
++{
++	this->removeChild(container);
++
++	delete container;
++}
++
++void Scene03b::update(float deltaTime)
++{
++	// ###############################################################
++	// Make SuperScene do what it needs to do (Escape key stops Scene)
++	// ###############################################################
++	SuperScene::update(deltaTime);
++
++	// ###############################################################
++	// text
++	// ###############################################################
++	std::string radiustxt = "<Q/E> radius: ";
++	radiustxt.append(std::to_string(radius));
++	text[5]->message(radiustxt);
++
++	std::string factortxt = "<W/S> factor: ";
++	factortxt.append(std::to_string(factor));
++	text[6]->message(factortxt);
++
++	std::string scaletxt = "<W/S> scale: ";
++	scaletxt.append(std::to_string(size));
++	text[7]->message(scaletxt);
++
++	text[8]->message("<R> reset");
++
++	// ###############################################################
++	// frequency amplitude
++	// ###############################################################
++	if (input()->getKeyDown( GLFW_KEY_R )) { factor = 7; size = 1.0f; radius = 225; makeLines(); }
++	if (input()->getKeyDown( GLFW_KEY_A )) { factor -= 1; makeLines(); }
++	if (input()->getKeyDown( GLFW_KEY_D )) { factor += 1; makeLines(); }
++	if (input()->getKeyDown( GLFW_KEY_Q )) { radius -= 25; makeLines(); }
++	if (input()->getKeyDown( GLFW_KEY_E )) { radius += 25; makeLines(); }
++	if (input()->getKey( GLFW_KEY_S )) { size -= 5 * deltaTime; }
++	if (input()->getKey( GLFW_KEY_W )) { size += 5 * deltaTime; }
++	container->scale.x = size;
++	container->scale.y = size;
++}
++
++void Scene03b::makeLines()
++{
++	int numlines = 628;
++	static int counter = 0;
++	Polar p1 = Polar(0.0f, radius);
++	Polar p2 = Polar(0.0f, 300);
++	Line* line = new Line();
++	line->color = RGBAColor(0,255,0,255);
++	while (counter <= numlines) {
++		Point2 point1 = p1.cartesian();
++		Point2 point2 = p2.cartesian();
++		line->addPoint(point1.x, point1.y);
++		line->addPoint(point2.x, point2.y);
++		line->addPoint(point1.x, point1.y);
++		p1.angle += 0.01f;
++		p2.angle += 0.01f * factor;
++		counter++;
++	}
++	counter = 0;
++	container->addLine(line);
++	delete line;
++}
+diff --git a/demo/scene03b.h b/demo/scene03b.h
+new file mode 100644
+index 0000000..4d80208
+--- /dev/null
++++ b/demo/scene03b.h
+@@ -0,0 +1,30 @@
++/**
++ * This file is part of RT2D, a 2D OpenGL framework.
++ *
++ * - Copyright 2015 Rik Teerling <rik@onandoffables.com>
++ */
++#ifndef SCENE03B_H
++#define SCENE03B_H
++
++#include "superscene.h"
++#include "basicentity.h"
++
++class Scene03b: public SuperScene
++{
++public:
++	Scene03b();
++	virtual ~Scene03b();
++
++	virtual void update(float deltaTime);
++
++private:
++	BasicEntity* container;
++	Timer t;
++	void makeLines();
++
++	int factor;
++	int radius;
++	float size;
++};
++
++#endif /* SCENE03B_H */
+-- 
+1.9.5.msysgit.0
+
