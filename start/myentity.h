@@ -16,6 +16,10 @@
 class MyEntity : public Entity
 {
 public:
+	float maxvelocity = 3; /**< @brief The maximum amount of velocity a boid can have */
+	float minvelocity = -3; /**< @brief The minimum amount of velocity a boid can have */
+	Vector2 velocity = Vector2(0.0f, 0.0f);
+
 	/// @brief Constructor
 	MyEntity();
 

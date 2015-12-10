@@ -6,13 +6,13 @@
 class Bullet : public Entity
 {
 public:
-	Polar polar = Polar((rand() % 360) * DEG_TO_RAD, 400.0f);
-
 	//@brief Constructor
 	Bullet();
 	
 	//@brief Destructor
 	virtual ~Bullet();
+
+	void shootBullet(Entity * entity);
 
 	/// @brief update is automatically called every frame
 	/// @param deltaTime the elapsed time in seconds
@@ -21,6 +21,10 @@ public:
 
 private:
 	//@brief Private declarations
+	int velocity_x;
+	int velocity_y;
+	Vector2 velocity;
+
 };
 
 

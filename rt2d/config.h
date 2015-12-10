@@ -24,7 +24,7 @@
 #define SWIDTH 1920 ///< The screen width
 #define SHEIGHT 1080 ///< The screen height
 
-#define FULLSCREEN 1 ///< Fullscreen or not
+#define FULLSCREEN 0 ///< Fullscreen or not
 
 #define WINDOWNAME "Shooter" ///< The window name
 

@@ -16,12 +16,10 @@ void MyScene::addEngineParts()
 	engineParts->position = myentity->position;
 	engine.push_back(engineParts);
 }
-
 void MyScene::addBulletParts()
 {
 	bulletParts = new Bullet();
 	this->addChild(bulletParts);
-	bulletParts->position = myentity->position;
 	bullets.push_back(bulletParts);
 }
 
@@ -56,15 +54,6 @@ void MyScene::update(float deltaTime)
 		this->stop();
 	}
 
-	// Shoot a bullet
-	if (canShoot == true) {
-		if (input()->getKeyDown(GLFW_KEY_SPACE)) {
-			addBulletParts();
-			bulletParts->polar.angle = myentity->rotation;
-			canShoot = false;
-		}
-	}
-
 	addEngineParts();
 	engineParts->polar.angle = myentity->rotation;
 
@@ -82,24 +71,17 @@ void MyScene::update(float deltaTime)
 		}
 	}
 
+	// Shoot a bullet
+	if (input()->getKeyDown(GLFW_KEY_SPACE)) {
+		addBulletParts();
+		bulletParts->shootBullet(myentity);
+	}
 	int a = bullets.size();
 	for (int i = 0; i<a; i++) {
-		bullets[i]->rotation = bulletParts->polar.angle;
-		bullets[i]->position += bulletParts->polar.cartesian() * 4 * deltaTime;
-
 		if (bullets[i]->position >= Point2(SWIDTH, SHEIGHT)) {
-			removeChild(bullets[i]);
-			canShoot = true;
-		}else {
-			canShoot = false;
-		}
-
-		if (a >= 25) {
-			bullets.pop_back();
 			removeChild(bullets[i]);
 		}
 	}
-
 
 	// Move myentity
 	if (input()->getKey(GLFW_KEY_W)) {

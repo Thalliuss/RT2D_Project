@@ -21,9 +21,6 @@
 class MyScene : public Scene
 {
 public:
-	bool canShoot = true;
-
-
 	/// @brief Constructor
 	MyScene();
 	/// @brief Destructor
