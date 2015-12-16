@@ -9,7 +9,6 @@
 #ifndef MYENTITY_H
 #define MYENTITY_H
 
-#include "engine.h"
 #include <rt2d/entity.h>
 
 /// @brief The MyEntity class is the Entity implementation.
@@ -18,7 +17,6 @@ class MyEntity : public Entity
 public:
 	/// @brief Constructor
 	MyEntity();
-
 	/// @brief Destructor
 	virtual ~MyEntity();
 
@@ -29,9 +27,6 @@ public:
 
 private:
 	/* add your private declarations */
-
-	/// @brief a Timer to rotate the color every n seconds
-	Timer t;
 };
 
 #endif /* MYENTITY_H */

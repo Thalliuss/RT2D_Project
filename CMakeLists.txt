@@ -183,12 +183,6 @@ add_executable(start
 	start/myentity.h
 	start/myscene.cpp
 	start/myscene.h
-	start/engine.cpp
-	start/engine.h
-	start/meteor.cpp
-	start/meteor.h
-	start/bullet.cpp
-	start/bullet.h
 )
 target_link_libraries(start
 	${ALL_LIBS}
