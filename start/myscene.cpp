@@ -1,8 +1,8 @@
 /**
-* This class describes MyScene behavior.
-*
-* Copyright 2015 Your Name <you@yourhost.com>
-*/
+ * This class describes MyScene behavior.
+ *
+ * Copyright 2015 Your Name <you@yourhost.com>
+ */
 
 #include <fstream>
 #include <sstream>
@@ -23,13 +23,15 @@ void MyScene::addBulletParts()
 	bullets.push_back(bulletParts);
 }
 
-
 MyScene::MyScene() : Scene()
 {
+	// start the timer.
+	t.start();
+
 	// create a single instance of MyEntity in the middle of the screen.
 	// the Sprite is added in Constructor of MyEntity.
 	myentity = new MyEntity();
-	myentity->position = Point2(SWIDTH / 2, SHEIGHT / 2);
+	myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
 
 	// create the scene 'tree'
 	// add myentity to this Scene as a child.
@@ -42,15 +44,16 @@ MyScene::~MyScene()
 	// deconstruct and delete the Tree
 	this->removeChild(myentity);
 
-
 	// delete myentity from the heap (there was a 'new' in the constructor)
 	delete myentity;
 }
 
 void MyScene::update(float deltaTime)
 {
+	// ###############################################################
 	// Escape key stops the Scene
-	if (input()->getKeyUp(GLFW_KEY_ESCAPE)) {
+	// ###############################################################
+	if (input()->getKeyUp( GLFW_KEY_ESCAPE )) {
 		this->stop();
 	}
 

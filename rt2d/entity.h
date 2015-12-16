@@ -43,9 +43,7 @@ public:
 	virtual void update(float deltaTime) = 0;
 
 	// transform
-	Polar polar;
 	Vector2 position; /**< @brief The position of the Entity */
-	Vector2 velocity; /**< @brief The velocity of the Entity */
 	float rotation; /**< @brief The rotation of the Entity */
 	Vector2 scale; /**< @brief The scale of the Entity */
 

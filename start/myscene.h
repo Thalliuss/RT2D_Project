@@ -35,9 +35,8 @@ public:
 	/// @return void
 	virtual void update(float deltaTime);
 
-
 private:
-	/// @brief User controllable spaceship
+	/// @brief the rotating square in the middle of the screen
 	MyEntity* myentity;
 
 	/// @brief engine
@@ -48,8 +47,7 @@ private:
 
 	/// @brief A collection of parts
 	std::deque<Engine*> engine;
-
 	std::deque<Bullet*> bullets;
-};
+}
 
 #endif /* SCENE00_H */

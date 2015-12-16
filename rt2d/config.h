@@ -21,16 +21,16 @@
 
 
 // screenwidth, screenheight
-#define SWIDTH 1920 ///< The screen width
-#define SHEIGHT 1080 ///< The screen height
+#define SWIDTH 1280 ///< The screen width
+#define SHEIGHT 720 ///< The screen height
 
 #define FULLSCREEN 0 ///< Fullscreen or not
 
-#define WINDOWNAME "Shooter" ///< The window name
+#define WINDOWNAME "RT2D" ///< The window name
 
-#define CLEARCOLOR_RED 0.0f ///< The red compnent of the color of the window
-#define CLEARCOLOR_GREEN 0.0f ///< The green compnent of the color of the window
-#define CLEARCOLOR_BLUE 0.0f ///< The blue compnent of the color of the window
+#define CLEARCOLOR_RED 0.1f ///< The red compnent of the color of the window
+#define CLEARCOLOR_GREEN 0.1f ///< The green compnent of the color of the window
+#define CLEARCOLOR_BLUE 0.1f ///< The blue compnent of the color of the window
 
 // renderer uses ubershader
 #define UBERSHADER 1 ///< use UberShader or not (0/1)

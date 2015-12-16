@@ -183,12 +183,15 @@ add_executable(start
 	start/myentity.h
 	start/myscene.cpp
 	start/myscene.h
+<<<<<<< .merge_file_a00640
 	start/engine.cpp
 	start/engine.h
 	start/meteor.cpp
 	start/meteor.h
 	start/bullet.cpp
 	start/bullet.h
+=======
+>>>>>>> .merge_file_a08500
 )
 target_link_libraries(start
 	${ALL_LIBS}
