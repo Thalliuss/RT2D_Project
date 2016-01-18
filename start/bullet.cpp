@@ -25,5 +25,4 @@ void Bullet::shootBullet(Entity * entity)
 void Bullet::update(float deltaTime)
 {
 	this->position += velocity;
-
 }

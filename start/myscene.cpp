@@ -9,25 +9,11 @@
 
 #include "myscene.h"
 
-void MyScene::addEngineParts()
-{
-	engineParts = new Engine();
-	this->addChild(engineParts);
-	engineParts->position = myentity->position;
-	engine.push_back(engineParts);
-}
-void MyScene::addBulletParts()
-{
-	bulletParts = new Bullet();
-	this->addChild(bulletParts);
-	bullets.push_back(bulletParts);
-}
+
 
 MyScene::MyScene() : Scene()
 {
-	// start the timer.
-	t.start();
-
+	addBulletParts();
 	// create a single instance of MyEntity in the middle of the screen.
 	// the Sprite is added in Constructor of MyEntity.
 	myentity = new MyEntity();
@@ -47,6 +33,25 @@ MyScene::~MyScene()
 	// delete myentity from the heap (there was a 'new' in the constructor)
 	delete myentity;
 }
+void MyScene::spawnMeteor() {
+	meteor = new Meteor();
+	this->addChild(meteor);
+	meteor->position = Point2(SWIDTH - 75, SHEIGHT / 2);
+	meteors.push_back(meteor);
+}
+void MyScene::addEngineParts()
+{
+	engineParts = new Engine();
+	this->addChild(engineParts);
+	engineParts->position = myentity->position;
+	engine.push_back(engineParts);
+}
+void MyScene::addBulletParts()
+{
+	bulletParts = new Bullet();
+	this->addChild(bulletParts);
+	bullets.push_back(bulletParts);
+}
 
 void MyScene::update(float deltaTime)
 {
@@ -58,6 +63,14 @@ void MyScene::update(float deltaTime)
 	}
 
 	addEngineParts();
+	timer -= 1;
+	if (timer <= 1) {
+		timer = 50;
+	}
+	if (timer >= 50) {
+		spawnMeteor();
+	}
+	//spawnMeteor();
 	engineParts->polar.angle = myentity->rotation;
 
 	int s = engine.size();
@@ -68,21 +81,34 @@ void MyScene::update(float deltaTime)
 		if (engine[i]->position >= Point2(SWIDTH, SHEIGHT)) {
 			removeChild(engine[i]);
 		} 
-		if (s >= 25) {
+		if (s >= 20) {
 			engine.pop_back();
 			removeChild(engine[i]);
 		}
 	}
-
 	// Shoot a bullet
 	if (input()->getKeyDown(GLFW_KEY_SPACE)) {
 		addBulletParts();
 		bulletParts->shootBullet(myentity);
 	}
+
 	int a = bullets.size();
 	for (int i = 0; i<a; i++) {
 		if (bullets[i]->position >= Point2(SWIDTH, SHEIGHT)) {
 			removeChild(bullets[i]);
+		}
+		int m = meteors.size();
+		for (int k = 0; k < m; k++) {
+			if (bullets[i]->position.y >= meteors[k]->position.y + -128 && bullets[i]->position.y <= meteors[k]->position.y + 128 && bullets[i]->position.x >= meteors[k]->position.x + -128 && bullets[i]->position.x <= meteors[k]->position.x + 128) {
+				removeChild(meteors[k]);				
+				meteors[k]->position.y += 5000;
+				removeChild(bullets[i]);
+				bullets[i]->position.y += 5000;
+			}
+			if (myentity->position.y >= meteors[k]->position.y + -64 && myentity->position.y <= meteors[k]->position.y + 64 && myentity->position.x >= meteors[k]->position.x + -64 && myentity->position.x <= meteors[k]->position.x + 64) {
+				removeChild(myentity);
+				//this->stop();
+			}
 		}
 	}
 

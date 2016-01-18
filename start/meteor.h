@@ -1,13 +1,23 @@
-#ifndef MYSCENE_H
-#define MYSCENE_H
+#ifndef METEOR_H
+#define METEOR_H
 
 #include <rt2d/entity.h>
+#include <random>
 
-class Meteor : Entity
+class Meteor : public Entity
 {
 public:
 	Meteor();
 	virtual ~Meteor();
+
+	void addDeOrBuff();
+
+	virtual void update(float deltaTime);
+
+private:
+	int velocity_x;
+	int velocity_y;
+	Vector2 velocity;
 };
 
-#endif /* SCENE00_H */
+#endif /* METEOR_H */
