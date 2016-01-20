@@ -42,7 +42,7 @@ public:
 	/// @return void
 	virtual void update(float deltaTime) = 0;
 
-	// transform
+	// transforms
 	Polar polar;
 	Vector2 position; /**< @brief The position of the Entity */
 	Vector2 velocity; /**< @brief The velocity of the Entity */
