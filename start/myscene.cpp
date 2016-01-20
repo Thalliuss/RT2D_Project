@@ -17,7 +17,7 @@ MyScene::MyScene() : Scene()
 	// create a single instance of MyEntity in the middle of the screen.
 	// the Sprite is added in Constructor of MyEntity.
 	myentity = new MyEntity();
-	myentity->position = Point2(SWIDTH/2, SHEIGHT/2);
+	myentity->position = Point2(SWIDTH / 2, SHEIGHT / 2);
 
 	// create the scene 'tree'
 	// add myentity to this Scene as a child.
@@ -36,7 +36,11 @@ MyScene::~MyScene()
 void MyScene::spawnMeteor() {
 	meteor = new Meteor();
 	this->addChild(meteor);
-	meteor->position = Point2(SWIDTH - 75, SHEIGHT / 2);
+	meteor->position = Point2(rand() % SWIDTH, rand() % SHEIGHT);
+	if (meteor->position.x <= SWIDTH) {
+		meteor->position.x = SWIDTH + 70;
+	}
+
 	meteors.push_back(meteor);
 }
 void MyScene::addEngineParts()
@@ -65,9 +69,9 @@ void MyScene::update(float deltaTime)
 	addEngineParts();
 	timer -= 1;
 	if (timer <= 1) {
-		timer = 50;
+		timer = 200;
 	}
-	if (timer >= 50) {
+	if (timer >= 200) {
 		spawnMeteor();
 	}
 	//spawnMeteor();
@@ -81,9 +85,10 @@ void MyScene::update(float deltaTime)
 		if (engine[i]->position >= Point2(SWIDTH, SHEIGHT)) {
 			removeChild(engine[i]);
 		} 
-		if (s >= 20) {
+		if (s >= 25) {
 			engine.pop_back();
 			removeChild(engine[i]);
+				
 		}
 	}
 	// Shoot a bullet
@@ -94,9 +99,7 @@ void MyScene::update(float deltaTime)
 
 	int a = bullets.size();
 	for (int i = 0; i<a; i++) {
-		if (bullets[i]->position >= Point2(SWIDTH, SHEIGHT)) {
-			removeChild(bullets[i]);
-		}
+
 		int m = meteors.size();
 		for (int k = 0; k < m; k++) {
 			if (bullets[i]->position.y >= meteors[k]->position.y + -128 && bullets[i]->position.y <= meteors[k]->position.y + 128 && bullets[i]->position.x >= meteors[k]->position.x + -128 && bullets[i]->position.x <= meteors[k]->position.x + 128) {
@@ -107,7 +110,16 @@ void MyScene::update(float deltaTime)
 			}
 			if (myentity->position.y >= meteors[k]->position.y + -64 && myentity->position.y <= meteors[k]->position.y + 64 && myentity->position.x >= meteors[k]->position.x + -64 && myentity->position.x <= meteors[k]->position.x + 64) {
 				removeChild(myentity);
-				//this->stop();
+				this->stop();
+			}
+			if (bullets[i]->position >= Point2(SWIDTH, SHEIGHT)) {
+				removeChild(bullets[i]);
+			}
+			if (meteors[k]->position >= Point2(SWIDTH, SHEIGHT)) {
+				//removeChild(meteors[k]);
+				meteors[k]->position.x = SWIDTH / 2 -1100;
+				//meteors[k]->position.y = rand() % SHEIGHT;
+
 			}
 		}
 	}

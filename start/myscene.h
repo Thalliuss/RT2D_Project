@@ -40,7 +40,7 @@ public:
 	virtual void update(float deltaTime);
 
 private:
-	int timer = 50;
+	int timer = 200;
 
 	/// @brief the rotating square in the middle of the screen
 	MyEntity* myentity;

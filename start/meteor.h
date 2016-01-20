@@ -4,13 +4,16 @@
 #include <rt2d/entity.h>
 #include <random>
 
+#include <deque>
+
+
 class Meteor : public Entity
 {
 public:
 	Meteor();
 	virtual ~Meteor();
 
-	void addDeOrBuff();
+	void particles();
 
 	virtual void update(float deltaTime);
 

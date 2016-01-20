@@ -6,8 +6,8 @@ Meteor::Meteor()
 	this->addSprite("assets/meteor.tga");
 	this->rotation = velocity.getAngle();
 
-	velocity_x = cos(rand() % 360) * 20;
-	velocity_y = sin(rand() % 360) * 20;
+	velocity_x = cos(rand() % 8 + 1) * 4;
+	velocity_y = sin(rand() % 8 + 1) * 2;
 
 	velocity = Vector2(velocity_x, velocity_y);
 
@@ -19,7 +19,7 @@ Meteor::~Meteor()
 
 }
 
-void Meteor::addDeOrBuff()
+void Meteor::particles()
 {
 
 }
