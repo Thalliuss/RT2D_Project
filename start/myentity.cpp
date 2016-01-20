@@ -8,7 +8,8 @@
 
 MyEntity::MyEntity() : Entity()
 {
-	this->addSprite("assets/spaceship.tga");
+	this->addSprite("assets/square.tga");
+	this->sprite()->color = RED;
 }
 
 MyEntity::~MyEntity()
@@ -18,7 +19,11 @@ MyEntity::~MyEntity()
 
 void MyEntity::update(float deltaTime)
 {
-	position += velocity;
-	rotation = velocity.getAngle();
-
+	// ###############################################################
+	// Rotate
+	// ###############################################################
+	this->rotation += HALF_PI * deltaTime; // 90 deg/sec
+	if (this->rotation > TWO_PI) {
+		this->rotation -= TWO_PI;
+	}
 }

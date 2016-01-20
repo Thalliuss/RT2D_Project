@@ -42,11 +42,10 @@ public:
 	/// @return void
 	virtual void update(float deltaTime) = 0;
 
-	// transforms
-	Polar polar;
-	Vector2 position; /**< @brief The position of the Entity */
+	// transform
+	Point2 position; /**< @brief The position of the Entity */
 	float rotation; /**< @brief The rotation of the Entity */
-	Vector2 scale; /**< @brief The scale of the Entity */
+	Point2 scale; /**< @brief The scale of the Entity */
 
 	// data structure
 	/// @brief add an Entity as a child of this Entity.
