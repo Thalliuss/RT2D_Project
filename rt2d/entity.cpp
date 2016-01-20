@@ -25,9 +25,6 @@ Entity::Entity()
 	position = Point2(0.0f, 0.0f);
 	rotation = 0.0f;
 	scale = Vector2(1.0f, 1.0f);
-	velocity = Vector2(0.0f, 0.0f);
-	polar = Polar();
-
 
 	_worldpos = Point2(0.0f, 0.0f);
 

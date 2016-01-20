@@ -146,6 +146,11 @@ add_executable(demo
 	demo/scene03.h
 	demo/scene03a.cpp
 	demo/scene03a.h
+<<<<<<< HEAD
+=======
+	demo/scene03b.cpp
+	demo/scene03b.h
+>>>>>>> b7fe0a4038c7d7064096e19cb71f237b2173321b
 	demo/scene04.cpp
 	demo/scene04.h
 	demo/scene05.cpp
@@ -181,12 +186,6 @@ add_executable(start
 	start/myentity.h
 	start/myscene.cpp
 	start/myscene.h
-	start/engine.cpp
-	start/engine.h
-	start/meteor.cpp
-	start/meteor.h
-	start/bullet.cpp
-	start/bullet.h
 )
 target_link_libraries(start
 	${ALL_LIBS}
