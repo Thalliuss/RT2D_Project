@@ -15,6 +15,8 @@
 class MyEntity : public Entity
 {
 public:
+	Vector2 velocity = Vector2(0.0f, 0.0f);
+
 	/// @brief Constructor
 	MyEntity();
 	/// @brief Destructor
